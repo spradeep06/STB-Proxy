@@ -39,7 +39,8 @@ basePath = os.path.abspath(os.getcwd())
 if os.getenv("HOST"):
     host = os.getenv("HOST")
 else:
-    host = "localhost:8001"
+    #host = "35.209.31.109:80"
+    host = requests.get("https://api.ipify.org").text
 
 if os.getenv("CONFIG"):
     configFile = os.getenv("CONFIG")
@@ -1179,6 +1180,6 @@ def lineup():
 if __name__ == "__main__":
     config = loadConfig()
     if "TERM_PROGRAM" in os.environ.keys() and os.environ["TERM_PROGRAM"] == "vscode":
-        app.run(host="0.0.0.0", port=8001, debug=True)
+        app.run(host="0.0.0.0", port=80, debug=True)
     else:
-        waitress.serve(app, port=8001, _quiet=True, threads=24)
+        waitress.serve(app, port=80, _quiet=True, threads=24)
