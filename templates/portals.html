@@ -19,7 +19,7 @@
         <div class="col">
 
             <div class="card text-dark bg-light mb-3">
-                <div class="card-header btn text-start stretched-link" data-id="{{ portal }}"
+                <div class="card-header btn text-start " data-id="{{ portal }}"
                     data-enabled="{{ portals[portal].enabled }}" data-name="{{ portals[portal].name }}"
                     data-url="{{ portals[portal].url }}" data-proxy="{{ portals[portal].proxy }}"
                     data-macs="{{ portals[portal].macs|join(',') }}"
@@ -51,7 +51,6 @@
     </div>
 
 </div>
-
 
 <!-- Add Modal -->
 <div class="modal fade text-dark" id="modalAdd" tabindex="-1">
@@ -85,8 +84,11 @@
                     <br><br>
 
                     <h6>MACs:</h6>
-                    <input type="text" name="macs" class="form-control flex-fill" title="MACs" required>
-                    <span class="text-muted">Enter a comma seperated list of MAC adresses.</span>
+                    <div class="input-group mb-2">
+                        <input type="text" name="macs" id="macsInput" class="form-control flex-fill" title="MACs" required>
+                        <button type="button" class="btn btn-primary" onclick="generateMACs()" style="margin-left: 10px;">Generate MACs</button>
+                    </div>
+                    <span class="text-muted">Enter a comma seperated list of MAC adresses or generate them with the button.</span>
 
                     <br><br>
 
@@ -108,6 +110,52 @@
         </div>
     </div>
 </div>
+
+<script>
+function generateMACs() {
+    // Prompt user for number of MAC addresses to generate
+    let count = prompt("How many MAC addresses would you like to generate?", "5");
+    
+    // Validate input
+    if (count === null) return; // User cancelled
+    
+    count = parseInt(count);
+    if (isNaN(count) || count <= 0) {
+        alert("Please enter a valid positive number.");
+        return;
+    }
+    
+    if (count > 100) {
+        if (!confirm("You're about to generate " + count + " MAC addresses. Continue?")) {
+            return;
+        }
+    }
+    
+    // Generate MAC addresses
+    const prefix = "00:1A:79";
+    const macs = [];
+    
+    for (let i = 0; i < count; i++) {
+        // Generate random last 3 octets (00:00:00 to FF:FF:FF)
+        const octet1 = Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
+        const octet2 = Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
+        const octet3 = Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
+        
+        const mac = `${prefix}:${octet1}:${octet2}:${octet3}`;
+        macs.push(mac);
+    }
+    
+    // Get existing MACs and append new ones
+    const macsInput = document.getElementById('macsInput');
+    const existingMacs = macsInput.value.trim();
+    
+    if (existingMacs) {
+        macsInput.value = existingMacs + ',' + macs.join(',');
+    } else {
+        macsInput.value = macs.join(',');
+    }
+}
+</script>
 
 <!-- Edit Modal -->
 <div class="modal fade text-dark" id="modalEdit" tabindex="-1">
