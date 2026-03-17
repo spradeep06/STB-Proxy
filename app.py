@@ -39,7 +39,7 @@ basePath = os.path.abspath(os.getcwd())
 if os.getenv("HOST"):
     host = os.getenv("HOST")
 else:
-    #host = "35.209.31.109:80"
+    
     host = requests.get("https://api.ipify.org").text
 
 if os.getenv("CONFIG"):
